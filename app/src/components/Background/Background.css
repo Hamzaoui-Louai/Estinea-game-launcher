@@ -1,0 +1,43 @@
+.Background-bckgrnd{
+    background: linear-gradient(to top,#081633,#102D69);
+    width:100%;
+    height:100%;
+    overflow: hidden;
+    }
+
+.Background-sqr{
+    background-color: #102D69;
+    height: 50px;
+    width: 50px;    
+    animation: rotate 5s linear infinite;
+}
+
+.Background-sqr-rotate{
+    height: 100px;
+    width: 100px;    
+    animation: rotate 2s linear infinite;
+}
+
+.Background-sqr-elevate{
+    animation: elevate 7.5s linear infinite;
+    position: absolute;
+    left: 50px;
+}
+
+@keyframes rotate{
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes elevate{
+    0% {
+        transform: translateY(120vh);
+    }
+    100% {
+        transform: translateY(-20vh);
+    }
+}
