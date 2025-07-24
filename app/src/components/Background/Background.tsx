@@ -33,7 +33,7 @@ function Square({ index, color, size, x_coordinate, latency }: square){
                     .Background-sqr-rotate-${index}{
                         height: ${size*20}px;
                         width: ${size*20}px;    
-                        animation: rotate ${size/2.5}s linear infinite;
+                        animation: rotate ${size/2.5}s linear ${latency/2}s infinite;
                     }
                     
                     .Background-sqr-elevate-${index}{
@@ -127,18 +127,19 @@ function Background({color1,color2} : background) {
             <div className='Background-bckgrnd'>
                 {
                     squares.map((square, index) => {
-                        return <Square index={index} color={color2} size={square.size} x_coordinate={square.x} latency={square.latency}/>
+                        return <Square key={index} index={index} color={color2} size={square.size} x_coordinate={square.x} latency={square.latency}/>
                     })
                 }
             </div>
             <style>
                 {`
-                    .Background-bckgrnd{
+                    .Background-bckgrnd{           
                     background: linear-gradient(to top,${color1},${color2});
                     width:100%;
                     height:100%;
                     overflow: hidden;
                     position: relative;
+                    z-index: 0;
                     }
                 `}
             </style>

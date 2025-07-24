@@ -1,0 +1,54 @@
+.auth{
+    height: 100%;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+}
+
+.auth-title{
+    position: absolute; 
+    width: 100%;
+    animation: auth-title 5s 1 ease-in-out forwards;
+}
+
+.auth-title-text{
+font-family: 'Audiowide',sans-serif;
+line-height: 1.2;
+animation: glow 2.5s linear infinite;
+font-size: 70px;
+
+color: white;
+}
+
+@keyframes auth-title{
+    0% {
+        transform: scale(90%);
+        opacity: 0%;
+        bottom : 40%
+    }
+    10% {
+        transform: scale(105%);
+        opacity: 100%;
+    }
+    15% {
+        transform: scale(100%);
+    }
+    75% {
+        bottom : 40%;
+    }
+    100% {
+        bottom : 70%;
+    }
+
+}
+@keyframes glow{
+0%{
+    text-shadow: 0 0 0px #FFFFFF, 0 0 0px #FFFFFF;
+}
+50%{
+    text-shadow: 0 0 6px #FFFFFF, 0 0 12px #FFFFFF;
+}
+100%{
+    text-shadow: 0 0 0px #FFFFFF, 0 0 0px #FFFFFF;
+}
+}

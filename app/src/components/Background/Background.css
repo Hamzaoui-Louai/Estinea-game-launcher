@@ -1,9 +1,4 @@
-.Background-bckgrnd{
-    background: linear-gradient(to top,#081633,#102D69);
-    width:100%;
-    height:100%;
-    overflow: hidden;
-    }
+
 
 @keyframes rotate{
     0% {
