@@ -5,7 +5,7 @@ function App() {
 
   return (
       <div className='app'>
-        <Background/>
+        <Background color1='#081633' color2='#102D69'/>
       </div>
   )
 }
