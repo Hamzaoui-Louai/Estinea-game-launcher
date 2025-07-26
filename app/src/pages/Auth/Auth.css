@@ -3,6 +3,7 @@
     width: 100%;
     left: 0px;
     top: 0px;
+    position: relative;
 }
 
 .auth-title{
@@ -18,6 +19,21 @@ animation: glow 2.5s linear infinite;
 font-size: 70px;
 
 color: white;
+}
+
+.auth-login-button{
+    background: linear-gradient(to bottom,#FF9701,#FFBB00);
+    width: fit-content;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 60px;
+    border-radius: 20px;
+    font-family: 'Audiowide',sans-serif;
+    font-size: 30px;
+    position: absolute;
+    bottom: -500px;
+    color: white;
+    animation: auth-login 1s 1 ease-in-out 5s forwards , button-glow 2.5s linear infinite 6s;
 }
 
 @keyframes auth-title{
@@ -41,6 +57,18 @@ color: white;
     }
 
 }
+
+@keyframes auth-login{
+    0% {
+        opacity: 0%;
+        bottom: 15%;
+    }
+    100% {
+        opacity: 100%;
+        bottom: 15%;
+    }
+}
+
 @keyframes glow{
 0%{
     text-shadow: 0 0 0px #FFFFFF, 0 0 0px #FFFFFF;
@@ -50,5 +78,16 @@ color: white;
 }
 100%{
     text-shadow: 0 0 0px #FFFFFF, 0 0 0px #FFFFFF;
+}
+}
+
+@keyframes button-glow{0%{
+    box-shadow: 0 0 0px #ffd151, 0 0 0px #ffe7a5;
+}
+50%{
+    box-shadow: 0 0 6px #ffd151, 0 0 12px #ffe7a5;
+}
+100%{
+    box-shadow: 0 0 0px #ffd151, 0 0 0px #ffe7a5;
 }
 }
