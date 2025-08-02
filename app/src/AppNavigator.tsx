@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Auth from "./pages/Auth/Auth";
+import Signup from "./pages/Signup/Signup";
 import Main from "./pages/Main/Main";
 import { useAddressStore } from "./store/AddressStore";
 import Background from "./components/Background/Background";
@@ -16,6 +17,10 @@ function AppNavigator(){
         {
             address: 'auth',
             component: <Auth />
+        },
+        {
+            address: 'signup',
+            component: <Signup />
         },
         {
             address: 'main',
@@ -38,6 +43,8 @@ function AppNavigator(){
         {
             case 'auth': result='#081633' 
             break;
+            case 'signup': result='#081633' 
+            break;
             case 'main': result='#EEEEEE'
         }
         return result;
@@ -48,6 +55,8 @@ function AppNavigator(){
         switch(currentAddress)
         {
             case 'auth': result='#102D69' 
+            break;
+            case 'singup': result='#102D69' 
             break;
             case 'main': result='#CCCCCC'
         }

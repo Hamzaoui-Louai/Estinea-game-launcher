@@ -12,7 +12,7 @@ function Auth(){
                 <h1 className='auth-title-text'>welcome to<br/>Estinea</h1>
             </div>
             <div className='w-full flex flex-row justify-center items-center'>
-                <button onClick={()=>setAddress('main')} className='auth-login-button cursor-pointer'>
+                <button onClick={()=>setAddress('signup')} className='auth-login-button cursor-pointer'>
                     continue your journey
                 </button>
             </div>
