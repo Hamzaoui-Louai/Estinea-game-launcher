@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { LuEye } from "react-icons/lu";
 import { LuEyeClosed } from "react-icons/lu";
+import { useMutation } from "@tanstack/react-query";
 
 function Signup()
 {
     const [viewPassword,setViewPassword] = useState<boolean>(false)
+    /*const signup = useMutation({
+        mutationFn : ()=>{},
+    })*/
 
     return(
         <div style={{fontFamily:"Audiowide"}} className="w-[60%] backdrop-blur-sm mx-auto py-[150px] bg-[#AAAAAA33] h-full">
@@ -13,7 +17,7 @@ function Signup()
                 <br/>just enter the info below
                 <br/>and we'll set you right up !
             </h3>
-            <form className="flex flex-col gap-3.5 items-center mt-[100px]relative">
+            <form onSubmit={(e)=>{e.preventDefault()}} className="flex flex-col gap-3.5 items-center mt-[100px] relative">
                 <input placeholder="enter your estin email" type="text" className="h-[50px] w-[300px] rounded-[10px] bg-[#FF970188] p-[15px] outline-none"/>
                 <div className="relative">
                 <input placeholder="enter your password" type={(viewPassword)?"text":"password"} className="h-[50px] w-[300px] rounded-[10px] bg-[#FF970188] p-[15px] outline-none"/>

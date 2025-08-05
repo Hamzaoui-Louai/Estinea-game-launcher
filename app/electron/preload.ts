@@ -18,7 +18,9 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     const [channel, ...omit] = args
     return ipcRenderer.invoke(channel, ...omit)
   },
-
+  sendRequest(method:string,url:string,payload:any) {
+    ipcRenderer.invoke('sendRequest',method,url,payload)
+  },
   // You can expose other APTs you need here.
   // ...
 })
