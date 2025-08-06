@@ -69,6 +69,9 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(()=>{
-  ipcMain.handle('sendRequest',(event,method,url,payload)=>{sendRequest(method,url,payload)})
+  ipcMain.handle('sendRequest',async (event,method,url,payload)=>{
+    console.log(await sendRequest(method,url,payload))
+    return await sendRequest(method,url,payload)
+  })
   createWindow()
 })
