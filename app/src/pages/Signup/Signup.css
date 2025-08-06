@@ -1,0 +1,16 @@
+.error-animate{
+    animation: error-animate 4s ease-out 1;
+}
+
+@keyframes error-animate{
+    0% {
+        backdrop-filter: hue-rotate(130deg) brightness(200%);
+
+    }
+    30%{
+        backdrop-filter: hue-rotate(130deg) brightness(200%);
+    }
+    100% {
+        backdrop-filter: hue-rotate(0deg) brightness(100%);
+    }
+}

@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuEye } from "react-icons/lu";
 import { LuEyeClosed } from "react-icons/lu";
 import { useMutation } from "@tanstack/react-query";
 import { unwrapRequestErrors } from "../../utils/mainProcessErrorsHandler";
 import { toast } from "react-toastify";
+import './Signup.css'
 
 function Signup()
 {
     const [viewPassword,setViewPassword] = useState<boolean>(false)
+    const [animateError,setAnimateError] = useState<boolean>(false)
     const signup = useMutation({
         mutationFn : async (singupData:any)=>{unwrapRequestErrors(await window.ipcRenderer.invoke('sendRequest','POST','user/signup',singupData))},
         onError: (error)=>{
@@ -35,7 +37,19 @@ function Signup()
         catch(error){console.log(error)}
     }
 
+    useEffect(()=>{
+        if (signup.error) {
+            setAnimateError(false);
+            requestAnimationFrame(() => {
+                setAnimateError(true);
+            });
+            const timeout = setTimeout(() => setAnimateError(false), 1000*4)
+            return () => clearTimeout(timeout)
+        }
+    },[signup.error])
+
     return(
+        <div className={`h-full w-full bg-[#FFFFFF01] ${(animateError)?"error-animate":""}`}>
         <div style={{fontFamily:"Audiowide"}} className="w-[60%] backdrop-blur-sm mx-auto py-[150px] bg-[#AAAAAA33] h-full">
             <h3 className="text-[30px] text-[#FFBB00]">
                 you don't have an account yet?
@@ -55,6 +69,7 @@ function Signup()
                 <input name="nickname" placeholder="enter a nickname" type="text" className="h-[50px] w-[300px] rounded-[10px] bg-[#FF970188] p-[15px] outline-none"/>
                 <button className="h-[50px] w-[300px] rounded-[10px] bg-[#FF9701] cursor-pointer" >Sign up</button>
             </form>
+        </div>
         </div>
     )
 }
