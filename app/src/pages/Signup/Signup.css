@@ -2,6 +2,10 @@
     animation: error-animate 4s ease-out 1;
 }
 
+.shake-animation{
+    animation: shake 2s ease 1;
+}
+
 @keyframes error-animate{
     0% {
         backdrop-filter: hue-rotate(130deg) brightness(200%);
@@ -12,5 +16,40 @@
     }
     100% {
         backdrop-filter: hue-rotate(0deg) brightness(100%);
+    }
+}
+@keyframes shake {
+    0%{
+        transform: translateX(20px);
+    }
+    3%{
+        transform: translateX(-18px);
+    }
+    8%{
+        transform: translateX(16px);
+    }
+    12%{
+        transform: translateX(-14px);
+    }
+    16%{
+        transform: translateX(12px);
+    }
+    22%{
+        transform: translateX(-10px);
+    }
+    28%{
+        transform: translateX(8px);
+    }
+    36%{
+        transform: translateX(-6px);
+    }
+    50%{
+        transform: translateX(4px);
+    }
+    75%{
+        transform: translateX(-2px);
+    }
+    100%{
+        transform: translateX(0px);
     }
 }
