@@ -1,11 +1,12 @@
 
-export function unwrapRequestErrors(response:axiosResponseWrapper)
+export function unwrapRequestErrors(wrappedResponse:axiosResponseWrapper)
 {
-    if(response.isError)
+    if(wrappedResponse.isError)
     {
-        throw response.response
+        throw wrappedResponse.response
     }
     else{
-        return response.response
+        console.log(wrappedResponse.response)
+        return (wrappedResponse.response as axiosValidResponse).data
     }
 }

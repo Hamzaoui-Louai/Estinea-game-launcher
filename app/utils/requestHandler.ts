@@ -43,7 +43,7 @@ async function putRequest(url:string,payload:any){
 
 async function patchRequest(url:string,payload:any){
     const response = await api.patch(url,payload)
-    return response;
+    return response; 
 }
 
 async function deleteRequest(url:string){
@@ -79,7 +79,7 @@ export async function sendRequest(method:HttpMethod,url:string,payload:any)
             default:
                 throw new Error(`Unsupported HTTP method: ${method}`);
         }
-        validResponse = {data:response}
+        validResponse = {data:response.data}
         wrappedResponse = wrapAxiosResponse(false,validResponse)
     }
     catch (error)

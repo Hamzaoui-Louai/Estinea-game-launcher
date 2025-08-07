@@ -16790,7 +16790,7 @@ async function sendRequest(method, url2, payload) {
       default:
         throw new Error(`Unsupported HTTP method: ${method}`);
     }
-    validResponse = { data: response };
+    validResponse = { data: response.data };
     wrappedResponse = wrapAxiosResponse(false, validResponse);
   } catch (error) {
     if (axios.isAxiosError(error)) {

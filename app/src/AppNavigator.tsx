@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Auth from "./pages/Auth/Auth";
 import Signup from "./pages/Signup/Signup";
+import Login from "./pages/Login/Login"
 import Main from "./pages/Main/Main";
 import { useAddressStore } from "./store/AddressStore";
 import Background from "./components/Background/Background";
@@ -21,6 +22,10 @@ function AppNavigator(){
         {
             address: 'signup',
             component: <Signup />
+        },
+        {
+            address: 'login',
+            component: <Login />
         },
         {
             address: 'main',
