@@ -21,6 +21,9 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   sendRequest:(method:string,url:string,payload:any) => {
     ipcRenderer.invoke('sendRequest',method,url,payload)
   },
+  modifyUserConfig:(action:modifyUserConfigAction,data:any) => {
+    ipcRenderer.invoke('modifyUserConfig',action,data)
+  }
   // You can expose other APTs you need here.
   // ...
 })

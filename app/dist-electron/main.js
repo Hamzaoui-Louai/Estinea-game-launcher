@@ -16849,8 +16849,10 @@ app.on("activate", () => {
 });
 app.whenReady().then(() => {
   ipcMain.handle("sendRequest", async (event, method, url2, payload) => {
-    console.log(await sendRequest(method, url2, payload));
     return await sendRequest(method, url2, payload);
+  });
+  ipcMain.handle("modifyUserConfig", async (event, action, data) => {
+    return await modifyUserConfig(action, data);
   });
   createWindow();
 });

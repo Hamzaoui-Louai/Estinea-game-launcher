@@ -32,4 +32,10 @@ declare global {
     type unkownError = {
         message: string
     }
+
+
+
+
+    //user config
+    type modifyUserConfigAction = 'set' | 'get' 
 }

@@ -3,6 +3,7 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { sendRequest } from '../utils/requestHandler';
+import { modifyUserConfig } from '../utils/userConfigHandler';
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -70,8 +71,10 @@ app.on('activate', () => {
 
 app.whenReady().then(()=>{
   ipcMain.handle('sendRequest',async (event,method,url,payload)=>{
-    console.log(await sendRequest(method,url,payload))
     return await sendRequest(method,url,payload)
+  })
+  ipcMain.handle('modifyUserConfig',async (event,action,data)=>{
+    return await modifyUserConfig(action,data)
   })
   createWindow()
 })
