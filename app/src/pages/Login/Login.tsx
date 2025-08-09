@@ -88,7 +88,7 @@ function Login()
                 <div className={`h-full w-full ${(animateError)?"shake-animation":""}`}>
                     <h3 className="text-[30px] text-[#FFBB00]">
                         ready to continue your adventure ?
-                        <br/>login and let us div in !
+                        <br/>login and let us dive in !
                     </h3>
                     <form onSubmit={(e)=>{handleLogin(e)}} className="flex flex-col gap-3.5 items-center mt-[100px] relative">
                         <input name="mail" placeholder="enter your estin email" type="text" className="h-[50px] w-[300px] rounded-[10px] bg-[#FF970188] p-[15px] outline-none"/>

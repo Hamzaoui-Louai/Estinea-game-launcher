@@ -25,7 +25,18 @@ function Signup()
             closeOnClick: false,
             theme:'colored',
             toastId: 'error-toast'
-        })}}
+        })}},
+        onSuccess: ()=>{
+            toast.success("you have successfully signed up\ngo check you email or spam to verify yourself\nand you'll be ready to go !",{
+                position: "bottom-center",
+                autoClose: 4000,
+                hideProgressBar: true,
+                closeButton: false,
+                closeOnClick: false,
+                theme:'colored',
+                toastId: 'error-toast'
+            })
+        }
     })
 
     async function handleSignup(e:React.FormEvent<HTMLFormElement>){
