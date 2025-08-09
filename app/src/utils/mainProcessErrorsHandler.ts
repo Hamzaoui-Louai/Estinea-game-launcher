@@ -6,7 +6,17 @@ export function unwrapRequestErrors(wrappedResponse:axiosResponseWrapper)
         throw wrappedResponse.response
     }
     else{
-        console.log(wrappedResponse.response)
         return (wrappedResponse.response as axiosValidResponse).data
+    }
+}
+
+export function unwrapUserConfigErrors(wrappedData:userConfigWrapper)
+{
+    if(wrappedData.isError)
+    {
+        throw wrappedData.data
+    }
+    else{
+        return wrappedData.data
     }
 }

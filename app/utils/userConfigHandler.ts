@@ -1,6 +1,8 @@
 import { create } from "domain";
 import { promises as fs } from "fs";
+import { wrap } from "module";
 import path from 'path';
+import { isErrored } from "stream";
 import { json } from "stream/consumers";
 
 type windowsDiskPath = 'C:\\' | 'D:\\' | 'E:\\' | 'F:\\' | 'G:\\' | 'H:\\'
@@ -162,6 +164,17 @@ async function readUserConfig() {
     }
 }
 
+function wrapValue(value:any)
+{
+    try{
+        return {isError:false,data:value}
+    }
+    catch(error)
+    {
+        return {isError:true,data:error}
+    }
+}
+
 export async function modifyUserConfig(action:modifyUserConfigAction,data:any){
     try{
         if(!await userConfigExists())
@@ -170,14 +183,14 @@ export async function modifyUserConfig(action:modifyUserConfigAction,data:any){
         }
         if(action == 'set')
         {
-            await writeNewDataToUserConfig(data);
+            return wrapValue(await writeNewDataToUserConfig(data));
         }
         if(action == 'get')
         {
-            return await readUserConfig();
+            return wrapValue(await readUserConfig());
         }
     }
-    catch{
-
+    catch(error){
+        return wrapValue(error);
     }
 }

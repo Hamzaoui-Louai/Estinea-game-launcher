@@ -38,4 +38,9 @@ declare global {
 
     //user config
     type modifyUserConfigAction = 'set' | 'get'
+
+    type userConfigWrapper = {
+        isError:boolean,
+        data:any
+    }
 }

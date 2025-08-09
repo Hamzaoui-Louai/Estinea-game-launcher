@@ -3,6 +3,7 @@ import { LuEye } from "react-icons/lu";
 import { LuEyeClosed } from "react-icons/lu";
 import { useMutation } from "@tanstack/react-query";
 import { unwrapRequestErrors } from "../../utils/mainProcessErrorsHandler";
+import { useAddressStore } from "../../store/AddressStore";
 import { toast } from "react-toastify";
 import './Signup.css'
 
@@ -10,6 +11,7 @@ function Signup()
 {
     const [viewPassword,setViewPassword] = useState<boolean>(false)
     const [animateError,setAnimateError] = useState<boolean>(false)
+    const setAddress = useAddressStore((state)=>state.setAddress)
     const signup = useMutation({
         mutationFn : async (singupData:any)=>{unwrapRequestErrors(await window.ipcRenderer.invoke('sendRequest','POST','user/signup',singupData))},
         onError: (error)=>{
@@ -76,6 +78,14 @@ function Signup()
                         <input name="nickname" placeholder="enter a nickname" type="text" className="h-[50px] w-[300px] rounded-[10px] bg-[#FF970188] p-[15px] outline-none"/>
                         <button className="h-[50px] w-[300px] rounded-[10px] bg-[#FF9701] hover:bg-[#DF7701] cursor-pointer" >Sign up</button> 
                     </form>
+                    <p className="flex flex-row justify-center gap-1.5 text-[15px] mt-1">
+                        already have an account ? 
+                        <h3 
+                        onClick={()=>{setAddress('login')}}
+                        className="text-[#FF9701] hover:text-[#DF7701] cursor-pointer underline">
+                            Log in
+                        </h3>
+                    </p>
                 </div>
             </div>
         </div>

@@ -16921,18 +16921,26 @@ async function readUserConfig() {
 please report to us in case this happens` };
   }
 }
+function wrapValue(value) {
+  try {
+    return { isError: false, data: value };
+  } catch (error) {
+    return { isError: true, data: error };
+  }
+}
 async function modifyUserConfig(action, data) {
   try {
     if (!await userConfigExists()) {
       await createUserConfig();
     }
     if (action == "set") {
-      await writeNewDataToUserConfig(data);
+      return wrapValue(await writeNewDataToUserConfig(data));
     }
     if (action == "get") {
-      return await readUserConfig();
+      return wrapValue(await readUserConfig());
     }
-  } catch {
+  } catch (error) {
+    return wrapValue(error);
   }
 }
 createRequire(import.meta.url);
