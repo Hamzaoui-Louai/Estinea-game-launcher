@@ -1,17 +1,17 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import path$1 from "node:path";
+import path$2 from "node:path";
 import require$$1 from "util";
 import stream, { Readable } from "stream";
-import require$$1$1 from "path";
+import path$1 from "path";
 import require$$3 from "http";
 import require$$4 from "https";
 import require$$0$1 from "url";
-import require$$6 from "fs";
+import require$$6, { promises } from "fs";
 import require$$8 from "crypto";
 import require$$4$1 from "assert";
-import require$$1$2 from "tty";
+import require$$1$1 from "tty";
 import require$$0$2 from "os";
 import zlib from "zlib";
 import { EventEmitter } from "events";
@@ -11444,7 +11444,7 @@ var mimeDb = require$$0;
  */
 (function(exports) {
   var db = mimeDb;
-  var extname = require$$1$1.extname;
+  var extname = path$1.extname;
   var EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/;
   var TEXT_TYPE_REGEXP = /^text\//i;
   exports.charset = charset;
@@ -12364,7 +12364,7 @@ var populate$1 = function(dst, src2) {
 };
 var CombinedStream = combined_stream;
 var util = require$$1;
-var path = require$$1$1;
+var path = path$1;
 var http$1 = require$$3;
 var https$1 = require$$4;
 var parseUrl$2 = require$$0$1.parse;
@@ -14000,7 +14000,7 @@ function requireSupportsColor() {
   if (hasRequiredSupportsColor) return supportsColor_1;
   hasRequiredSupportsColor = 1;
   const os = require$$0$2;
-  const tty = require$$1$2;
+  const tty = require$$1$1;
   const hasFlag2 = requireHasFlag();
   const { env } = process;
   let forceColor;
@@ -14101,7 +14101,7 @@ function requireNode() {
   if (hasRequiredNode) return node.exports;
   hasRequiredNode = 1;
   (function(module, exports) {
-    const tty = require$$1$2;
+    const tty = require$$1$1;
     const util2 = require$$1;
     exports.init = init;
     exports.log = log;
@@ -16705,8 +16705,8 @@ axios.VERSION = VERSION$1;
 axios.toFormData = toFormData$1;
 axios.AxiosError = AxiosError$1;
 axios.Cancel = axios.CanceledError;
-axios.all = function all(promises) {
-  return Promise.all(promises);
+axios.all = function all(promises2) {
+  return Promise.all(promises2);
 };
 axios.spread = spread$1;
 axios.isAxiosError = isAxiosError$1;
@@ -16811,20 +16811,145 @@ async function sendRequest(method, url2, payload) {
   }
   return wrappedResponse;
 }
+async function userConfigExistsOnDisk(disk) {
+  try {
+    await promises.access(path$1.join(disk, "Estinea User Config", "config.json"));
+    return true;
+  } catch {
+    return false;
+  }
+}
+async function userConfigExists() {
+  if (await userConfigExistsOnDisk("C:\\") || await userConfigExistsOnDisk("D:\\") || await userConfigExistsOnDisk("E:\\") || await userConfigExistsOnDisk("F:\\") || await userConfigExistsOnDisk("G:\\") || await userConfigExistsOnDisk("H:\\")) {
+    return true;
+  } else {
+    return false;
+  }
+}
+async function createUserConfigInDisk(disk) {
+  try {
+    await promises.mkdir(path$1.join(disk, "Estinea User Config"), { recursive: true });
+    await promises.writeFile(path$1.join(disk, "Estinea User Config", "config.json"), "{}", "utf-8");
+  } catch (error) {
+    switch (error.code) {
+      case "EACCESS":
+        throw { message: `don't have the permission to create the config in disk ${disk}` };
+      case "EPERM":
+        throw { message: `don't have the permission to create the config in disk ${disk}` };
+      case "EROFS":
+        throw { message: `the disk ${disk} has a read-only file system` };
+      case "ENOSPC":
+        throw { message: `the disk ${disk} has no space left` };
+      default:
+        throw { message: `an unexpected error happened when trying to create the config in disk ${disk} ; Error code : ${error.code}` };
+    }
+  }
+}
+async function createUserConfig() {
+  let errorsList = [];
+  try {
+    await createUserConfigInDisk("C:\\");
+  } catch (error) {
+    errorsList.push(error);
+    try {
+      await createUserConfigInDisk("D:\\");
+    } catch (error2) {
+      errorsList.push(error2);
+      try {
+        await createUserConfigInDisk("E:\\");
+      } catch (error3) {
+        errorsList.push(error3);
+        try {
+          await createUserConfigInDisk("F:\\");
+        } catch (error4) {
+          errorsList.push(error4);
+          try {
+            await createUserConfigInDisk("G:\\");
+          } catch (error5) {
+            errorsList.push(error5);
+            try {
+              await createUserConfigInDisk("H:\\");
+            } catch (error6) {
+              errorsList.push(error6);
+              throw { errors: errorsList };
+            }
+          }
+        }
+      }
+    }
+  }
+}
+async function findUserConfigPath() {
+  let configPath = "none";
+  if (await userConfigExistsOnDisk("C:\\")) {
+    configPath = path$1.join("C:\\", "Estinea User Config", "config.json");
+  }
+  if (await userConfigExistsOnDisk("D:\\")) {
+    configPath = path$1.join("D:\\", "Estinea User Config", "config.json");
+  }
+  if (await userConfigExistsOnDisk("E:\\")) {
+    configPath = path$1.join("E:\\", "Estinea User Config", "config.json");
+  }
+  if (await userConfigExistsOnDisk("F:\\")) {
+    configPath = path$1.join("F:\\", "Estinea User Config", "config.json");
+  }
+  if (await userConfigExistsOnDisk("G:\\")) {
+    configPath = path$1.join("G:\\", "Estinea User Config", "config.json");
+  }
+  if (await userConfigExistsOnDisk("H:\\")) {
+    configPath = path$1.join("H:\\", "Estinea User Config", "config.json");
+  }
+  return configPath;
+}
+async function writeNewDataToUserConfig(data) {
+  try {
+    data = JSON.stringify(data);
+    await promises.writeFile(await findUserConfigPath(), data, "utf-8");
+    return { message: "data setted successfully" };
+  } catch (error) {
+    throw { message: `an unexpected error occured , error code : ${error.code} 
+please report to us in case this happens` };
+  }
+}
+async function readUserConfig() {
+  let data;
+  try {
+    data = JSON.parse(await promises.readFile(await findUserConfigPath(), "utf-8"));
+    return data;
+  } catch (error) {
+    throw { message: `an unexpected error occured , error code : ${error.code} 
+please report to us in case this happens` };
+  }
+}
+async function modifyUserConfig(action, data) {
+  try {
+    if (!await userConfigExists()) {
+      await createUserConfig();
+    }
+    if (action == "set") {
+      await writeNewDataToUserConfig(data);
+    }
+    if (action == "get") {
+      return await readUserConfig();
+    }
+  } catch {
+  }
+}
 createRequire(import.meta.url);
-const __dirname = path$1.dirname(fileURLToPath(import.meta.url));
-process.env.APP_ROOT = path$1.join(__dirname, "..");
+const __dirname = path$2.dirname(fileURLToPath(import.meta.url));
+process.env.APP_ROOT = path$2.join(__dirname, "..");
 const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
-const MAIN_DIST = path$1.join(process.env.APP_ROOT, "dist-electron");
-const RENDERER_DIST = path$1.join(process.env.APP_ROOT, "dist");
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path$1.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
+const MAIN_DIST = path$2.join(process.env.APP_ROOT, "dist-electron");
+const RENDERER_DIST = path$2.join(process.env.APP_ROOT, "dist");
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path$2.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
 let win;
 function createWindow() {
+  console.log(path$2.join(__dirname, "..", "estinea icon.png"));
   win = new BrowserWindow({
-    icon: path$1.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: path$2.join(__dirname, "..", "estinea icon.png"),
     autoHideMenuBar: true,
     webPreferences: {
-      preload: path$1.join(__dirname, "preload.mjs")
+      preload: path$2.join(__dirname, "preload.mjs")
     }
   });
   win.webContents.on("did-finish-load", () => {
@@ -16833,7 +16958,7 @@ function createWindow() {
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {
-    win.loadFile(path$1.join(RENDERER_DIST, "index.html"));
+    win.loadFile(path$2.join(RENDERER_DIST, "index.html"));
   }
 }
 app.on("window-all-closed", () => {

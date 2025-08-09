@@ -37,5 +37,5 @@ declare global {
 
 
     //user config
-    type modifyUserConfigAction = 'set' | 'get' 
+    type modifyUserConfigAction = 'set' | 'get'
 }

@@ -142,6 +142,7 @@ async function writeNewDataToUserConfig(data:any)
     {
         data = JSON.stringify(data)
         await fs.writeFile(await findUserConfigPath(),data,'utf-8')
+        return {message:'data setted successfully'}
     }
     catch(error:any)
     {
@@ -153,6 +154,7 @@ async function readUserConfig() {
     let data:any
     try {
         data = JSON.parse(await fs.readFile(await findUserConfigPath(), 'utf-8'))
+        return data;
     }
     catch(error:any)
     {
