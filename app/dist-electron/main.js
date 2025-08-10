@@ -16727,83 +16727,6 @@ const {
   getAdapter,
   mergeConfig
 } = axios;
-const api = axios.create({
-  baseURL: "http://localhost:3000/"
-});
-function wrapAxiosResponse(isError, response) {
-  let wrapper;
-  wrapper = {
-    isError,
-    response
-  };
-  return wrapper;
-}
-async function getRequest(url2) {
-  const response = await api.get(url2);
-  return response;
-}
-async function postRequest(url2, payload) {
-  const response = await api.post(url2, payload);
-  return response;
-}
-async function putRequest(url2, payload) {
-  const response = await api.put(url2, payload);
-  return response;
-}
-async function patchRequest(url2, payload) {
-  const response = await api.patch(url2, payload);
-  return response;
-}
-async function deleteRequest(url2) {
-  const response = await api.delete(url2);
-  return response;
-}
-async function sendRequest(method, url2, payload) {
-  var _a;
-  let response;
-  let validResponse;
-  let wrappedResponse;
-  try {
-    switch (method) {
-      case "GET":
-        response = await getRequest(url2);
-        break;
-      case "POST":
-        response = await postRequest(url2, payload);
-        break;
-      case "PUT":
-        response = await putRequest(url2, payload);
-        break;
-      case "PATCH":
-        response = await patchRequest(url2, payload);
-        break;
-      case "DELETE":
-        response = await deleteRequest(url2);
-        break;
-      default:
-        throw new Error(`Unsupported HTTP method: ${method}`);
-    }
-    validResponse = { data: response.data };
-    wrappedResponse = wrapAxiosResponse(false, validResponse);
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        let responseError = { status: error.response.status, message: ((_a = error.response.data) == null ? void 0 : _a.error) || "an unknown server error occurred" };
-        wrappedResponse = wrapAxiosResponse(true, responseError);
-      } else if (error.request) {
-        let requestError = { message: "an unknown network error occurred, try checking your network and try again" };
-        wrappedResponse = wrapAxiosResponse(true, requestError);
-      } else {
-        let configError = { message: "something unexpected happened . please contact us if this happens again" };
-        wrappedResponse = wrapAxiosResponse(true, configError);
-      }
-    } else {
-      let unkownError = { message: "something unexpected happened . please contact us if this happens again" };
-      wrappedResponse = wrapAxiosResponse(true, unkownError);
-    }
-  }
-  return wrappedResponse;
-}
 async function userConfigExistsOnDisk(disk) {
   try {
     await promises.access(path$1.join(disk, "Estinea User Config", "config.json"));
@@ -16935,6 +16858,115 @@ async function modifyUserConfig(action, data) {
   } catch (error) {
     return wrapValue(error);
   }
+}
+async function getTokenFromUserConfig() {
+  try {
+    if (!await userConfigExists()) {
+      await createUserConfig();
+    }
+    const userConfigData = await readUserConfig();
+    const token = userConfigData == null ? void 0 : userConfigData.token;
+    return token;
+  } catch (error) {
+    console.log(error);
+  }
+}
+const api = axios.create({
+  baseURL: "http://localhost:3000/"
+});
+function wrapAxiosResponse(isError, response) {
+  let wrapper;
+  wrapper = {
+    isError,
+    response
+  };
+  return wrapper;
+}
+async function getRequest(url2) {
+  const response = await api.get(url2, {
+    headers: {
+      Authorization: `Bearer ${await getTokenFromUserConfig()}`
+    }
+  });
+  return response;
+}
+async function postRequest(url2, payload) {
+  const response = await api.post(url2, payload, {
+    headers: {
+      Authorization: `Bearer ${await getTokenFromUserConfig()}`
+    }
+  });
+  return response;
+}
+async function putRequest(url2, payload) {
+  const response = await api.put(url2, payload, {
+    headers: {
+      Authorization: `Bearer ${await getTokenFromUserConfig()}`
+    }
+  });
+  return response;
+}
+async function patchRequest(url2, payload) {
+  const response = await api.patch(url2, payload, {
+    headers: {
+      Authorization: `Bearer ${await getTokenFromUserConfig()}`
+    }
+  });
+  return response;
+}
+async function deleteRequest(url2) {
+  const response = await api.delete(url2, {
+    headers: {
+      Authorization: `Bearer ${await getTokenFromUserConfig()}`
+    }
+  });
+  return response;
+}
+async function sendRequest(method, url2, payload) {
+  var _a;
+  let response;
+  let validResponse;
+  let wrappedResponse;
+  try {
+    switch (method) {
+      case "GET":
+        response = await getRequest(url2);
+        break;
+      case "POST":
+        response = await postRequest(url2, payload);
+        break;
+      case "PUT":
+        response = await putRequest(url2, payload);
+        break;
+      case "PATCH":
+        response = await patchRequest(url2, payload);
+        break;
+      case "DELETE":
+        response = await deleteRequest(url2);
+        break;
+      default:
+        throw new Error(`Unsupported HTTP method: ${method}`);
+    }
+    validResponse = { data: response.data };
+    wrappedResponse = wrapAxiosResponse(false, validResponse);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        let responseError = { status: error.response.status, message: ((_a = error.response.data) == null ? void 0 : _a.error) || "an unknown server error occurred" };
+        wrappedResponse = wrapAxiosResponse(true, responseError);
+      } else if (error.request) {
+        let requestError = { message: "an unknown network error occurred, try checking your network and try again" };
+        wrappedResponse = wrapAxiosResponse(true, requestError);
+      } else {
+        let configError = { message: "something unexpected happened . please contact us if this happens again" };
+        wrappedResponse = wrapAxiosResponse(true, configError);
+      }
+    } else {
+      let unkownError = { message: "something unexpected happened . please contact us if this happens again" };
+      wrappedResponse = wrapAxiosResponse(true, unkownError);
+    }
+  }
+  return wrappedResponse;
 }
 createRequire(import.meta.url);
 const __dirname = path$2.dirname(fileURLToPath(import.meta.url));

@@ -1,21 +1,9 @@
 import axios from "axios";
-import { AxiosResponse } from 'axios';
+import { getTokenFromUserConfig } from './userConfigHandler.ts'
 
 const api = axios.create({
     baseURL: 'http://localhost:3000/', 
 })
-
-/*function handleHttpErrors(response: AxiosResponse)
-{
-    if(response.status<400)
-    {
-        return response.data
-    }
-    else
-    {
-        throw new Error(`HTTP Error ${response.status}: ${response.data?.message || JSON.stringify(response.data)}`);
-    }
-}*/
 
 function wrapAxiosResponse(isError:boolean,response:axiosValidResponse | responseError | requestError | configError | unkownError){
     let wrapper:axiosResponseWrapper
@@ -27,27 +15,42 @@ function wrapAxiosResponse(isError:boolean,response:axiosValidResponse | respons
 }
 
 async function getRequest(url:string){
-    const response = await api.get(url)
+    const response = await api.get(url, {
+        headers: {
+            Authorization: `Bearer ${await getTokenFromUserConfig()}`
+        }})
     return response;
 }
 
 async function postRequest(url:string,payload:any){
-    const response = await api.post(url,payload)
+    const response = await api.post(url,payload, {
+        headers: {
+            Authorization: `Bearer ${await getTokenFromUserConfig()}`
+        }})
     return response;
 }
 
 async function putRequest(url:string,payload:any){
-    const response = await api.put(url,payload)
+    const response = await api.put(url,payload, {
+        headers: {
+            Authorization: `Bearer ${await getTokenFromUserConfig()}`
+        }})
     return response;
 }
 
 async function patchRequest(url:string,payload:any){
-    const response = await api.patch(url,payload)
+    const response = await api.patch(url,payload, {
+        headers: {
+            Authorization: `Bearer ${await getTokenFromUserConfig()}`
+        }})
     return response; 
 }
 
 async function deleteRequest(url:string){
-    const response = await api.delete(url)
+    const response = await api.delete(url, {
+        headers: {
+            Authorization: `Bearer ${await getTokenFromUserConfig()}`
+        }})
     return response;
 }
 

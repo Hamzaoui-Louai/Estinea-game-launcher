@@ -194,3 +194,20 @@ export async function modifyUserConfig(action:modifyUserConfigAction,data:any){
         return wrapValue(error);
     }
 }
+
+//for axios 
+
+export async function getTokenFromUserConfig(){
+    try{
+    if(!await userConfigExists())
+    {
+        await createUserConfig();
+    }
+    const userConfigData = await readUserConfig()
+    const token = userConfigData?.token;
+    return token;
+    }
+    catch (error){
+        console.log(error)
+    }
+}

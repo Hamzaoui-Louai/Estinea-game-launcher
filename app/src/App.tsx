@@ -15,6 +15,9 @@ function App() {
       <div className='app relative'>              
         <AppNavigator />
       </div>
+      {/*<audio loop autoPlay>
+        <source src="../background music.mp3" type="audio/mpeg" />
+      </audio>*/}
       <ToastContainer />
     </QueryClientProvider>
   )
