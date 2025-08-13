@@ -238,3 +238,39 @@ export async function setVersionFolderPath(path:string){
         console.log(error)
     }
 }
+
+export async function getLocalVersion():Promise<number>
+{
+    try{
+        if(!await userConfigExists())
+        {
+            await createUserConfig();
+        }
+        const userConfigData = await readUserConfig()
+        if(!userConfigData.localVersionNumber)
+        {
+            await setLocalVersion(0.0)
+        }
+        return userConfigData.localVersionNumber || 0.0;
+    }
+    catch (error){
+        console.log(error)
+    }
+    return 0.0
+}
+
+export async function setLocalVersion(localVersionNumber:number)
+{
+    try{
+        if(!await userConfigExists())
+        {
+            await createUserConfig();
+        }
+        const userConfigData = await readUserConfig()
+        userConfigData.localVersionNumber=localVersionNumber
+        await writeNewDataToUserConfig(userConfigData);
+    }
+    catch (error){
+        console.log(error)
+    }
+}
