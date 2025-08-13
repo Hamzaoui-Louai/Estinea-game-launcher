@@ -7,6 +7,6 @@ type AppState = {
 
 export const useAddressStore = create<AppState>((set) => ({
     //address: 'auth',
-    address: 'accountsettings',
+    address: 'main',
     setAddress: (address) => set({ address: address }),
 }));

@@ -1,6 +1,8 @@
 import axios from "axios";
 import { getTokenFromUserConfig } from './userConfigHandler.ts'
 
+//api requests
+
 const api = axios.create({
     baseURL: 'http://localhost:3000/', 
 })
@@ -114,3 +116,5 @@ export async function sendRequest(method:HttpMethod,url:string,payload:any)
     }
     return wrappedResponse;
 }
+
+//google drive requests

@@ -34,7 +34,7 @@ function Main(){
             <div className="w-full h-[100px] bg-gradient-to-r from-[#081633] to-[#102D69] flex flex-row items-center justify-center">
                 <button 
                 style={{fontFamily:'Audiowide'}}
-                className="bg-gradient-to-b from-[#FF9701] to-[#FFBB00] w-fit px-2.5 h-[60px] rounded-[14px] text-[30px] text-white cursor-pointer">
+                className="bg-gradient-to-b from-[#FF9701] to-[#FFBB00] px-[50px] w-fit px-2.5 h-[60px] rounded-[14px] text-[30px] text-white cursor-pointer">
                     LAUNCH
                 </button>
             </div>

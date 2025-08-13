@@ -1,9 +1,5 @@
-import { create } from "domain";
 import { promises as fs } from "fs";
-import { wrap } from "module";
 import path from 'path';
-import { isErrored } from "stream";
-import { json } from "stream/consumers";
 
 type windowsDiskPath = 'C:\\' | 'D:\\' | 'E:\\' | 'F:\\' | 'G:\\' | 'H:\\'
 type userConfigError = {
@@ -206,6 +202,37 @@ export async function getTokenFromUserConfig(){
     const userConfigData = await readUserConfig()
     const token = userConfigData?.token;
     return token;
+    }
+    catch (error){
+        console.log(error)
+    }
+}
+
+//for versions folder
+
+export async function getVersionFolderPath(){
+    try{
+        if(!await userConfigExists())
+        {
+            await createUserConfig();
+        }
+        const userConfigData = await readUserConfig()
+        return userConfigData.versionFolderPath || ''
+    }
+    catch (error){
+        console.log(error)
+    }
+}
+
+export async function setVersionFolderPath(path:string){
+    try{
+        if(!await userConfigExists())
+        {
+            await createUserConfig();
+        }
+        const userConfigData = await readUserConfig()
+        userConfigData.versionFolderPath=path
+        await writeNewDataToUserConfig(userConfigData);
     }
     catch (error){
         console.log(error)
