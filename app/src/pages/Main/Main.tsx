@@ -1,6 +1,7 @@
 import { FiSettings } from "react-icons/fi";
 import { useQuery } from "@tanstack/react-query";
 import { unwrapRequestErrors } from "../../utils/mainProcessErrorsHandler";
+import { useEffect } from "react";
 
 
 function Main(){
@@ -8,6 +9,16 @@ function Main(){
         queryKey: ["userInfo"],
         queryFn: async () => {
             const response = unwrapRequestErrors(await window.ipcRenderer.invoke('sendRequest','GET','user/getuserdata',{}))
+            return response;
+    }})
+
+
+    //only for testing
+    const updatesInfo = useQuery({
+        queryKey: ["updatesInfo"],
+        queryFn: async () => {
+            const response = unwrapRequestErrors(await window.ipcRenderer.invoke('update'))
+            console.log(response)
             return response;
     }})
 

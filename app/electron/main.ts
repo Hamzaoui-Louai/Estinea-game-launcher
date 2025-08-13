@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { sendRequest } from '../utils/requestHandler';
 import { modifyUserConfig } from '../utils/userConfigHandler';
+import { update } from '../utils/updatesManager'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -76,6 +77,9 @@ app.whenReady().then(()=>{
   })
   ipcMain.handle('modifyUserConfig',async (event,action,data)=>{
     return await modifyUserConfig(action,data)
+  })
+  ipcMain.handle('update',async ()=>{
+    return await update()
   })
   createWindow()
 })

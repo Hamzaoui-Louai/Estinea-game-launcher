@@ -1,8 +1,11 @@
 import { promises as fs } from "fs"; 
 import path from "path";
 import { dialog } from "electron"
-import { getVersionFolderPath ,setVersionFolderPath } from './userConfigHandler'
-import { getLocalVersion , setLocalVersion } from './userConfigHandler'
+import { getVersionFolderPath ,setVersionFolderPath ,getLocalVersion , setLocalVersion } from './userConfigHandler'
+import axios from 'axios'
+import dotenv from 'dotenv'
+
+dotenv.config({path:'../.env'})
 
 async function versionFolderExists()
 {
@@ -39,15 +42,24 @@ async function createVersionFolderInPath(versionFolderPath:string)
     await fs.mkdir(path.join(versionFolderPath,'Estinea versions folder','versions logs'),{recursive:true})
     await setVersionFolderPath(path.join(versionFolderPath,'Estinea versions folder'))
     }
-    catch(error)
+    catch(error:any)
     {
         throw {message:`an unexpected error happened , error code : ${error.code}`}
     }
 }
 
-function getNewestVersionAvailable()
+async function getNewestVersionAvailable()
 {
-
+    const onlineVersionFileID = '1seNJWNZ0Fg3z8Vl0LEHoW33cWJ2zGNKc'
+    const url = `https://www.googleapis.com/drive/v3/files/${onlineVersionFileID}?alt=media&key=${process.env.GOOGLE_API_KEY}`;
+    
+    try {
+        const res = await axios.get(url);
+        console.log(res.data)
+    } catch (err:any) {
+        console.error("Error fetching JSON:", err.message);
+        return null;
+    }
 }
 
 function downloadNewVersion()
@@ -67,5 +79,6 @@ export async function update()
         const versionFolderPath = getPathForVersionFolderUsingWindowsDialog()
         await createVersionFolderInPath(versionFolderPath)
     }
+    await getNewestVersionAvailable()
 
 }

@@ -22,6 +22,9 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   },
   modifyUserConfig: (action, data) => {
     electron.ipcRenderer.invoke("modifyUserConfig", action, data);
+  },
+  update: () => {
+    electron.ipcRenderer.invoke("update");
   }
   // You can expose other APTs you need here.
   // ...
