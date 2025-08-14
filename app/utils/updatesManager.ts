@@ -1,4 +1,5 @@
 import { promises as fs } from "fs"; 
+import * as fsSync from 'fs';
 import path from "path";
 import { dialog } from "electron"
 import { getVersionFolderPath ,setVersionFolderPath ,getLocalVersion , setLocalVersion } from './userConfigHandler'
@@ -6,6 +7,11 @@ import axios from 'axios'
 import dotenv from 'dotenv'
 
 dotenv.config({path:'../.env'})
+
+type onlineEstineaVersionInfo = {
+    versionNumber: number,
+    versionDownloadLink: string
+}
 
 async function versionFolderExists()
 {
@@ -48,23 +54,71 @@ async function createVersionFolderInPath(versionFolderPath:string)
     }
 }
 
-async function getNewestVersionAvailable()
+async function getNewestVersionAvailable():Promise<onlineEstineaVersionInfo>
 {
     const onlineVersionFileID = '1seNJWNZ0Fg3z8Vl0LEHoW33cWJ2zGNKc'
-    const url = `https://www.googleapis.com/drive/v3/files/${onlineVersionFileID}?alt=media&key=${process.env.GOOGLE_API_KEY}`;
+    const url = `https://drive.google.com/uc?export=download&id=${onlineVersionFileID}`;
     
     try {
         const res = await axios.get(url);
-        console.log(res.data)
+        const version = res.data?.latestVersion
+        const onlineVersionInfo:onlineEstineaVersionInfo={versionNumber:version.versionQuantifier,versionDownloadLink:version.versionDownloadLink}
+        return onlineVersionInfo;
     } catch (err:any) {
         console.error("Error fetching JSON:", err.message);
-        return null;
+        console.error(err.code)
+        throw {message:`an unexpected error occured , error code : ${err.code}`}
     }
 }
 
-function downloadNewVersion()
+function inNeedOfANewVersion(localVersion:number,onlineVersion:number)
 {
+    if(localVersion<onlineVersion)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
+async function downloadNewVersion(downloadLink:string,outputPath:string)
+{
+    try{
+        const writer = fsSync.createWriteStream(outputPath);
+
+        const res = await axios.get(downloadLink,{
+            responseType: 'stream'
+        });
+
+        const totalLength = parseInt(res.headers['content-length'] || '0', 10);
+        let downloaded = 0;
+
+        res.data.on('data', (chunk: Buffer) => {
+            downloaded += chunk.length;
+            if (totalLength) {
+                const percent = ((downloaded / totalLength) * 100).toFixed(2);
+                process.stdout.write(`\rDownloaded: ${percent}%`);
+            } else {
+                process.stdout.write(`\rDownloaded: ${downloaded} bytes`);
+            }
+        });
+
+        res.data.pipe(writer);
+
+        return new Promise<void>((resolve, reject) => {
+            writer.on('finish', () => {
+                console.log('\nDownload complete');
+                resolve();
+            });
+            writer.on('error', reject);
+        });
+    }
+    catch(err:any)
+    {
+        //console.log(err);
+    }
 }
 
 function deleteOldVersion()
@@ -79,6 +133,17 @@ export async function update()
         const versionFolderPath = getPathForVersionFolderUsingWindowsDialog()
         await createVersionFolderInPath(versionFolderPath)
     }
-    await getNewestVersionAvailable()
+    const newestVersionAvailable = await getNewestVersionAvailable();
+    console.log(newestVersionAvailable)
+    const localVersion = await getLocalVersion();
+    const versionFolderPath = path.join(await getVersionFolderPath(),`Estinea ${newestVersionAvailable.versionNumber.toFixed(1)}.zip`)
+    if(inNeedOfANewVersion(localVersion,newestVersionAvailable.versionNumber))
+    {
+        await downloadNewVersion(newestVersionAvailable.versionDownloadLink,versionFolderPath);
+    }
+    else
+    {
+        console.log("no update needed");
+    }
 
 }

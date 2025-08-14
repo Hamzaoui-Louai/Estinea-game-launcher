@@ -8,7 +8,8 @@ import path$2 from "path";
 import require$$3 from "http";
 import require$$4$1 from "https";
 import require$$0$1 from "url";
-import require$$6, { promises } from "fs";
+import * as require$$6 from "fs";
+import require$$6__default, { promises } from "fs";
 import require$$8 from "crypto";
 import require$$4$2 from "assert";
 import require$$1$1 from "tty";
@@ -11678,14 +11679,7 @@ var _eval = EvalError;
 var range = RangeError;
 var ref = ReferenceError;
 var syntax = SyntaxError;
-var type;
-var hasRequiredType;
-function requireType() {
-  if (hasRequiredType) return type;
-  hasRequiredType = 1;
-  type = TypeError;
-  return type;
-}
+var type = TypeError;
 var uri = URIError;
 var abs$1 = Math.abs;
 var floor$1 = Math.floor;
@@ -11931,7 +11925,7 @@ function requireCallBindApplyHelpers() {
   if (hasRequiredCallBindApplyHelpers) return callBindApplyHelpers;
   hasRequiredCallBindApplyHelpers = 1;
   var bind3 = functionBind;
-  var $TypeError2 = requireType();
+  var $TypeError2 = type;
   var $call2 = requireFunctionCall();
   var $actualApply = requireActualApply();
   callBindApplyHelpers = function callBindBasic(args) {
@@ -12004,7 +11998,7 @@ var $EvalError = _eval;
 var $RangeError = range;
 var $ReferenceError = ref;
 var $SyntaxError = syntax;
-var $TypeError$1 = requireType();
+var $TypeError$1 = type;
 var $URIError = uri;
 var abs = abs$1;
 var floor = floor$1;
@@ -12335,7 +12329,7 @@ var GetIntrinsic2 = getIntrinsic;
 var $defineProperty = GetIntrinsic2("%Object.defineProperty%", true);
 var hasToStringTag = requireShams()();
 var hasOwn$1 = hasown;
-var $TypeError = requireType();
+var $TypeError = type;
 var toStringTag = hasToStringTag ? Symbol.toStringTag : null;
 var esSetTostringtag = function setToStringTag(object, value) {
   var overrideIfSet = arguments.length > 2 && !!arguments[2] && arguments[2].force;
@@ -12368,7 +12362,7 @@ var path$1 = path$2;
 var http$1 = require$$3;
 var https$1 = require$$4$1;
 var parseUrl$2 = require$$0$1.parse;
-var fs$1 = require$$6;
+var fs$1 = require$$6__default;
 var Stream = stream.Stream;
 var crypto$1 = require$$8;
 var mime = mimeTypes;
@@ -16901,6 +16895,33 @@ async function setVersionFolderPath(path2) {
     console.log(error);
   }
 }
+async function getLocalVersion() {
+  try {
+    if (!await userConfigExists()) {
+      await createUserConfig();
+    }
+    const userConfigData = await readUserConfig();
+    if (!userConfigData.localVersionNumber) {
+      await setLocalVersion(0);
+    }
+    return userConfigData.localVersionNumber || 0;
+  } catch (error) {
+    console.log(error);
+  }
+  return 0;
+}
+async function setLocalVersion(localVersionNumber) {
+  try {
+    if (!await userConfigExists()) {
+      await createUserConfig();
+    }
+    const userConfigData = await readUserConfig();
+    userConfigData.localVersionNumber = localVersionNumber;
+    await writeNewDataToUserConfig(userConfigData);
+  } catch (error) {
+    console.log(error);
+  }
+}
 const api = axios.create({
   baseURL: "http://localhost:3000/"
 });
@@ -17003,7 +17024,7 @@ const version$1 = "17.2.1";
 const require$$4 = {
   version: version$1
 };
-const fs = require$$6;
+const fs = require$$6__default;
 const path = path$2;
 const os = require$$0$2;
 const crypto = require$$8;
@@ -17354,22 +17375,70 @@ async function createVersionFolderInPath(versionFolderPath) {
   }
 }
 async function getNewestVersionAvailable() {
+  var _a;
   const onlineVersionFileID = "1seNJWNZ0Fg3z8Vl0LEHoW33cWJ2zGNKc";
-  const url2 = `https://www.googleapis.com/drive/v3/files/${onlineVersionFileID}?alt=media&key=${process.env.GOOGLE_API_KEY}`;
+  const url2 = `https://drive.google.com/uc?export=download&id=${onlineVersionFileID}`;
   try {
     const res = await axios.get(url2);
-    console.log(res.data);
+    const version2 = (_a = res.data) == null ? void 0 : _a.latestVersion;
+    const onlineVersionInfo = { versionNumber: version2.versionQuantifier, versionDownloadLink: version2.versionDownloadLink };
+    return onlineVersionInfo;
   } catch (err) {
     console.error("Error fetching JSON:", err.message);
-    return null;
+    console.error(err.code);
+    throw { message: `an unexpected error occured , error code : ${err.code}` };
+  }
+}
+function inNeedOfANewVersion(localVersion, onlineVersion) {
+  if (localVersion < onlineVersion) {
+    return true;
+  } else {
+    return false;
+  }
+}
+async function downloadNewVersion(downloadLink, outputPath) {
+  try {
+    const writer = require$$6.createWriteStream(outputPath);
+    const res = await axios.get(downloadLink, {
+      responseType: "stream"
+    });
+    const totalLength = parseInt(res.headers["content-length"] || "0", 10);
+    let downloaded = 0;
+    res.data.on("data", (chunk) => {
+      downloaded += chunk.length;
+      if (totalLength) {
+        const percent = (downloaded / totalLength * 100).toFixed(2);
+        process.stdout.write(`\rDownloaded: ${percent}%`);
+      } else {
+        process.stdout.write(`\rDownloaded: ${downloaded} bytes`);
+      }
+    });
+    res.data.pipe(writer);
+    return new Promise((resolve, reject) => {
+      writer.on("finish", () => {
+        console.log("\nDownload complete");
+        resolve();
+      });
+      writer.on("error", reject);
+    });
+  } catch (err) {
   }
 }
 async function update() {
   if (!await versionFolderExists()) {
-    const versionFolderPath = getPathForVersionFolderUsingWindowsDialog();
-    await createVersionFolderInPath(versionFolderPath);
+    const versionFolderPath2 = getPathForVersionFolderUsingWindowsDialog();
+    await createVersionFolderInPath(versionFolderPath2);
   }
-  await getNewestVersionAvailable();
+  const newestVersionAvailable = await getNewestVersionAvailable();
+  console.log(newestVersionAvailable);
+  const localVersion = await getLocalVersion();
+  const versionFolderPath = path$2.join(await getVersionFolderPath(), `Estinea ${newestVersionAvailable.versionNumber.toFixed(1)}.zip`);
+  if (inNeedOfANewVersion(localVersion, newestVersionAvailable.versionNumber)) {
+    await downloadNewVersion(newestVersionAvailable.versionDownloadLink, versionFolderPath);
+  } else {
+    console.log("no update needed");
+  }
+  await downloadNewVersion(newestVersionAvailable.versionDownloadLink, versionFolderPath);
 }
 createRequire(import.meta.url);
 const __dirname = path$3.dirname(fileURLToPath(import.meta.url));
