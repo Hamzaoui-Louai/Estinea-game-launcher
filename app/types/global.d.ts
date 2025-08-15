@@ -43,4 +43,17 @@ declare global {
         isError:boolean,
         data:any
     }
+
+
+    //updates manager related types
+
+    type gameButtonState = 'checking' | 'update' | 'updating' | 'launch'
+
+    type gameButtonUpdatingInfo = {
+        progressPercentage:number,
+        totalBytes:number,
+        downloadedBytes:number,
+        bytesPerSecondSpeed:number,
+        etaSeconds:number
+    }
 }

@@ -17396,49 +17396,60 @@ function inNeedOfANewVersion(localVersion, onlineVersion) {
     return false;
   }
 }
-async function downloadNewVersion(downloadLink, outputPath) {
+async function downloadNewVersion(downloadLink, outputPath, onProgress) {
   try {
     const writer = require$$6.createWriteStream(outputPath);
-    const res = await axios.get(downloadLink, {
-      responseType: "stream"
-    });
+    const res = await axios.get(downloadLink, { responseType: "stream" });
     const totalLength = parseInt(res.headers["content-length"] || "0", 10);
     let downloaded = 0;
+    let lastTime = Date.now();
+    let lastDownloaded = 0;
     res.data.on("data", (chunk) => {
       downloaded += chunk.length;
-      if (totalLength) {
-        const percent = (downloaded / totalLength * 100).toFixed(2);
-        process.stdout.write(`\rDownloaded: ${percent}%`);
-      } else {
-        process.stdout.write(`\rDownloaded: ${downloaded} bytes`);
+      const now = Date.now();
+      const elapsedMs = now - lastTime;
+      if (elapsedMs >= 1e3) {
+        const bytesInLastSecond = downloaded - lastDownloaded;
+        const speedBps = bytesInLastSecond;
+        const remainingBytes = totalLength - downloaded;
+        const etaSeconds = speedBps > 0 ? remainingBytes / speedBps : 0;
+        onProgress({
+          progressPercentage: totalLength ? downloaded / totalLength * 100 : 0,
+          totalBytes: totalLength,
+          downloadedBytes: downloaded,
+          bytesPerSecondSpeed: speedBps,
+          etaSeconds
+        });
+        lastTime = now;
+        lastDownloaded = downloaded;
       }
     });
     res.data.pipe(writer);
     return new Promise((resolve, reject) => {
-      writer.on("finish", () => {
-        console.log("\nDownload complete");
-        resolve();
-      });
+      writer.on("finish", () => resolve());
       writer.on("error", reject);
     });
   } catch (err) {
+    throw { message: `an unexpected error occured , error code : ${err.code}` };
   }
 }
-async function update() {
+async function needsUpdates() {
   if (!await versionFolderExists()) {
-    const versionFolderPath2 = getPathForVersionFolderUsingWindowsDialog();
-    await createVersionFolderInPath(versionFolderPath2);
+    const versionFolderPath = getPathForVersionFolderUsingWindowsDialog();
+    await createVersionFolderInPath(versionFolderPath);
   }
   const newestVersionAvailable = await getNewestVersionAvailable();
-  console.log(newestVersionAvailable);
   const localVersion = await getLocalVersion();
+  const result = inNeedOfANewVersion(localVersion, newestVersionAvailable.versionNumber);
+  console.log(result);
+  return result;
+}
+async function update(onProgress) {
+  const newestVersionAvailable = await getNewestVersionAvailable();
   const versionFolderPath = path$2.join(await getVersionFolderPath(), `Estinea ${newestVersionAvailable.versionNumber.toFixed(1)}.zip`);
-  if (inNeedOfANewVersion(localVersion, newestVersionAvailable.versionNumber)) {
-    await downloadNewVersion(newestVersionAvailable.versionDownloadLink, versionFolderPath);
-  } else {
-    console.log("no update needed");
-  }
-  await downloadNewVersion(newestVersionAvailable.versionDownloadLink, versionFolderPath);
+  await downloadNewVersion(newestVersionAvailable.versionDownloadLink, versionFolderPath, onProgress);
+}
+async function launch() {
 }
 createRequire(import.meta.url);
 const __dirname = path$3.dirname(fileURLToPath(import.meta.url));
@@ -17484,8 +17495,16 @@ app.whenReady().then(() => {
   ipcMain.handle("modifyUserConfig", async (event, action, data) => {
     return await modifyUserConfig(action, data);
   });
-  ipcMain.handle("update", async () => {
-    return await update();
+  ipcMain.handle("needUpdates", async () => {
+    return await needsUpdates();
+  });
+  ipcMain.handle("update", async (event) => {
+    return await update((progress) => {
+      event.sender.send("download-progress", progress);
+    });
+  });
+  ipcMain.handle("launch", async () => {
+    return await launch();
   });
   createWindow();
 });

@@ -19,13 +19,19 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     return ipcRenderer.invoke(channel, ...omit)
   },
   sendRequest:(method:string,url:string,payload:any) => {
-    ipcRenderer.invoke('sendRequest',method,url,payload)
+    return ipcRenderer.invoke('sendRequest',method,url,payload)
   },
   modifyUserConfig:(action:modifyUserConfigAction,data:any) => {
-    ipcRenderer.invoke('modifyUserConfig',action,data)
+    return ipcRenderer.invoke('modifyUserConfig',action,data)
+  },
+  needUpdates:() => {
+    return ipcRenderer.invoke('needUpdates')
   },
   update:() => {
-    ipcRenderer.invoke('update')
+    return ipcRenderer.invoke('update')
+  },
+  launch:() => {
+    return ipcRenderer.invoke('launch')
   }
   // You can expose other APTs you need here.
   // ...

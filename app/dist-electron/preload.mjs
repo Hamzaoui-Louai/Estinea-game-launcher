@@ -18,13 +18,19 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
     return electron.ipcRenderer.invoke(channel, ...omit);
   },
   sendRequest: (method, url, payload) => {
-    electron.ipcRenderer.invoke("sendRequest", method, url, payload);
+    return electron.ipcRenderer.invoke("sendRequest", method, url, payload);
   },
   modifyUserConfig: (action, data) => {
-    electron.ipcRenderer.invoke("modifyUserConfig", action, data);
+    return electron.ipcRenderer.invoke("modifyUserConfig", action, data);
+  },
+  needUpdates: () => {
+    return electron.ipcRenderer.invoke("needUpdates");
   },
   update: () => {
-    electron.ipcRenderer.invoke("update");
+    return electron.ipcRenderer.invoke("update");
+  },
+  launch: () => {
+    return electron.ipcRenderer.invoke("launch");
   }
   // You can expose other APTs you need here.
   // ...
