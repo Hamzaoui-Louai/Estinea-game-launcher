@@ -140,7 +140,7 @@ function Main(){
                 <button 
                 onClick={async ()=>{await handleGameButton()}}
                 style={{fontFamily:'Audiowide'}}
-                className={`transition-all duration-200 ${(gameButtonState === 'update' || gameButtonState === 'launch')?
+                className={`z-0 relative transition-all duration-200 ${(gameButtonState === 'update' || gameButtonState === 'launch')?
                     "bg-gradient-to-b from-[#FF9701] to-[#FFBB00] px-[50px] w-fit h-[60px] rounded-[14px] text-[30px] text-white cursor-pointer"
                     :
                     (gameButtonState==='checking')?
@@ -161,10 +161,12 @@ function Main(){
                         (gameButtonState==='launch')?
                         'LAUNCH':
                         <>                            
-                            <div className="z-2 bg-gradient-to-r from-[#FF9701] to-[#FFBB00] px-[50px] absolute left-0 top-0 h-[60px] rounded-[14px]"
-                            style={{width:`${gameButtonUpdatingInfo.progressPercentage}%`}}
+                            <div className="transition-all duration-1000 z-0 bg-gradient-to-r from-[#FF9701] to-[#FFBB00] absolute left-0 top-0 h-[60px] rounded-[14px]"
+                            style={{width:`${
+                                Math.floor(gameButtonUpdatingInfo.progressPercentage)
+                                }%`}}
                             ></div>
-                            <h1 className="z-10">
+                            <h1 className="z-10 relative">
                             {`download progress : ${formattedProgressPercentage()}% | ${formattedDownloadedBytes()}/${formattedTotalBytes()} | download speed : ${formattedBytesPerSecondSpeed()} | estimated time left : ${formattedEtaSeconds()}`}
                             </h1>
                         </>
