@@ -1,10 +1,12 @@
 import { promises as fs } from "fs"; 
 import * as fsSync from 'fs';
+import unzipper from "unzipper";
 import path from "path";
 import { dialog } from "electron"
 import { getVersionFolderPath ,setVersionFolderPath ,getLocalVersion , setLocalVersion } from './userConfigHandler'
 import axios from 'axios'
 import dotenv from 'dotenv'
+import { spawn } from 'child_process';
 
 dotenv.config({path:'../.env'})
 
@@ -136,9 +138,37 @@ async function downloadNewVersion(downloadLink:string,outputPath:string,onProgre
     }
 }
 
+async function unzipNewVersion(inputPath:string,outputPath:string){
+    fsSync.mkdirSync(outputPath, { recursive: true });
+
+    return new Promise((resolve, reject) => {
+        fsSync.createReadStream(inputPath)
+            .pipe(unzipper.Extract({ path: outputPath }))
+            .on('close', resolve)
+            .on('error', reject);
+    });
+}
+
 function deleteOldVersion()
 {
     
+}
+
+async function launchGame(){
+    //"C:\Estinea versions folder\Estinea\Estinea 0.0\Stardew Valley\Stardew Valley.exe"
+    const exePath = path.join(await getVersionFolderPath(),`Estinea`,'Estinea 0.0','Stardew Valley','Stardew Valley.exe')
+
+    const child = spawn(exePath, [], { detached: true , stdio: 'ignore' });
+
+    child.on('error', (err) => {
+        console.error("Failed to start game:", err);
+    });
+
+    child.on('close', (code) => {
+        console.log(`Game exited with code ${code}`);
+    });
+
+    child.unref()
 }
 
 export async function needsUpdates():Promise<boolean>
@@ -164,11 +194,14 @@ export async function update(onProgress: (progress: {
 }) => void)
 {
     const newestVersionAvailable = await getNewestVersionAvailable();
-    const versionFolderPath = path.join(await getVersionFolderPath(),`Estinea ${newestVersionAvailable.versionNumber.toFixed(1)}.zip`)
-    await downloadNewVersion(newestVersionAvailable.versionDownloadLink,versionFolderPath,onProgress);
+    const versionFilePath = path.join(await getVersionFolderPath(),`Estinea.zip`)
+    const versionFolderPath = path.join(await getVersionFolderPath(),`Estinea`)
+    await downloadNewVersion(newestVersionAvailable.versionDownloadLink,versionFilePath,onProgress);
+    await unzipNewVersion(versionFilePath,versionFolderPath)
 }
 
 export async function launch()
 {
-
+    await launchGame(); 
+    return 'close'
 }

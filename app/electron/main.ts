@@ -86,7 +86,11 @@ app.whenReady().then(()=>{
       event.sender.send('download-progress', progress);});
   })
   ipcMain.handle('launch',async ()=>{
-    return await launch()
+    const process = await launch()
+    if(process === 'close')
+    {
+      setTimeout(()=>app.quit(),5000)
+    }
   })
 
   createWindow()
