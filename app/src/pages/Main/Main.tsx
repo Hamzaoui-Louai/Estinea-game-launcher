@@ -126,10 +126,20 @@ function Main(){
                 <div style={{fontFamily:'Audiowide'}} className="w-[25%] bg-[#102D69AA] m-1.5 rounded-[10px]">
                     <section id="user-info" className="p-[10px] m-[10px] rounded-[10px] bg-[#102D69AA] flex flex-row gap-[10px]">
                         <div className="w-[50px] h-[50px] rounded-[50%] bg-amber-50 font-black text-[black] text-[30px] flex justify-center items-center">
-                            {userInfo.data?.nickName[0].toUpperCase()}
+                            {
+                                (userInfo.isLoading)?
+                                '.'
+                                :
+                                userInfo.data?.nickName?.[0]?.toUpperCase()
+                            }
                         </div>
                         <div className="text-[20px] grow h-[50px] flex flex-row items-center justify-between">
-                            <h1>{userInfo.data?.nickName}</h1>
+                            <h1>{
+                                (userInfo.isLoading)?
+                                '...'
+                                :
+                                userInfo.data?.nickName
+                            }</h1>
                             <FiSettings className="cursor-pointer transition-all duration-500 rotate-0 hover:rotate-[-60deg]" size={30}/>
                         </div>
                     </section>

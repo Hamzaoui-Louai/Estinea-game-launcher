@@ -13,7 +13,7 @@ function Signup()
     const [animateError,setAnimateError] = useState<boolean>(false)
     const setAddress = useAddressStore((state)=>state.setAddress)
     const signup = useMutation({
-        mutationFn : async (singupData:any)=>{unwrapRequestErrors(await window.ipcRenderer.invoke('sendRequest','POST','user/signup',singupData))},
+        mutationFn : async (singupData:any)=>{unwrapRequestErrors(await window.ipcRenderer.invoke('sendRequest','POST','auth/signup',singupData))},
         onError: (error)=>{
             if(!toast.isActive('error-toast'))
             {

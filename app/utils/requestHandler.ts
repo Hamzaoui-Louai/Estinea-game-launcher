@@ -116,5 +116,3 @@ export async function sendRequest(method:HttpMethod,url:string,payload:any)
     }
     return wrappedResponse;
 }
-
-//google drive requests

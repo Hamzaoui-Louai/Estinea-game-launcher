@@ -15,7 +15,7 @@ function Login()
     const [animateError,setAnimateError] = useState<boolean>(false)
     const setAddress = useAddressStore((state)=>state.setAddress)
     const login = useMutation({
-        mutationFn : async (loginData:any)=>{return unwrapRequestErrors(await window.ipcRenderer.invoke('sendRequest','POST','user/login',loginData))},
+        mutationFn : async (loginData:any)=>{return unwrapRequestErrors(await window.ipcRenderer.invoke('sendRequest','POST','auth/login',loginData))},
         onError: (error)=>{
             console.log(error)
             if(!toast.isActive('error-toast'))
