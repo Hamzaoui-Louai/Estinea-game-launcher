@@ -2,6 +2,7 @@ import { FiSettings } from "react-icons/fi";
 import { useQuery } from "@tanstack/react-query";
 import { unwrapRequestErrors } from "../../utils/mainProcessErrorsHandler";
 import { useEffect, useState } from "react";
+import { useAddressStore } from "../../store/AddressStore";
 
 
 function Main(){
@@ -13,6 +14,8 @@ function Main(){
         bytesPerSecondSpeed:0,
         etaSeconds:0
     })
+
+    const setAddress = useAddressStore((state)=>state.setAddress)
 
     const userInfo = useQuery({
         queryKey: ["userInfo"],
@@ -118,11 +121,15 @@ function Main(){
 
     return(
         <div className="w-full h-full relative left-0 top-0 flex flex-col">
-            <div className="flex flex-row w-full grow">
+            <div className="flex flex-row w-full grow relative">
                 <div className="grow bg-[#AAAAAAAA] m-1.5 rounded-[10px] backdrop-blur-md p-[15px] flex flex-col justify-start text-gray-700">
                 <h1 className="text-[20px] font-bold flex justify-self-start">version 1.0</h1>
                 <p className="text-[20px] font-normal flex justify-self-start">didn't even start lol</p>
                 </div>
+                <div className="absolute right-0 top-0 p-[10px] bg-[#102D69] rounded-[50%] m-[15px] cursor-pointer group" onClick={()=>setAddress('accountsettings')}>
+                    <FiSettings className="cursor-pointer transition-all duration-500 rotate-0 group-hover:rotate-[-60deg]" size={30}/>
+                </div>
+                {/*
                 <div style={{fontFamily:'Audiowide'}} className="w-[25%] bg-[#102D69AA] m-1.5 rounded-[10px] flex flex-col">
                     <section id="user-info" className="p-[10px] m-[10px] rounded-[10px] bg-[#102D69AA] flex flex-row gap-[10px]">
                         <div className="w-[50px] h-[50px] rounded-[50%] bg-amber-50 font-black text-[black] text-[30px] flex justify-center items-center">
@@ -143,14 +150,8 @@ function Main(){
                             <FiSettings className="cursor-pointer transition-all duration-500 rotate-0 hover:rotate-[-60deg]" size={30}/>
                         </div>
                     </section>
-                    <section className=" grow m-[10px] mt-0 rounded-[10px]">
-                        <img src="../../../public/estinea dummy launcher character.png" alt="character" className="[image-rendering:pixelated] h-full w-auto object-contain filter hue-rotate-[360deg]"/>
-
-                    </section>
-                    <button id="user-info" className="flex justify-center items-center p-[10px] m-[10px] text-[20px] h-[60px] rounded-[10px] bg-[#102D69AA] hover:bg-[#102D69] cursor-pointer">
-                        customize your character
-                    </button>
                 </div>
+                */}
             </div>
             <div className="w-full h-[100px] bg-gradient-to-r from-[#081633] to-[#102D69] flex flex-row items-center justify-center">
                 <button 
