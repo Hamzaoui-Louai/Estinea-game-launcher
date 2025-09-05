@@ -1,10 +1,11 @@
 import { useState , useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { unwrapRequestErrors } from "../../utils/mainProcessErrorsHandler";
-import { LuEye , LuEyeClosed } from "react-icons/lu"
+import { FaEye , FaEyeSlash } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoSave } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 interface accordionInterface{
     title:string,
@@ -60,8 +61,8 @@ function ChangeNickname(){
 
     useEffect(() => {
         return () => {
-            console.log('mutated from use effect')
-            modifyUserInfo.mutate();
+            //console.log('mutated from use effect')
+            //modifyUserInfo.mutate();
         };
     }, []);
 
@@ -75,12 +76,77 @@ function ChangeNickname(){
     </form>)
 }
 
+function ChangePassword(){
+
+    const modifyUserPassword = useMutation({
+        mutationFn: async ()=>{
+            try{
+            const response = unwrapRequestErrors(await window.ipcRenderer.invoke('sendRequest','PATCH','user/modifyuserpassword',{oldPassword:oldPassword,newPassword:newPassword}))
+            console.log(response)
+            toast.success('password changed successfully')
+            return response;
+            }
+            catch(error:any)
+            {
+                console.log(error)
+                toast.error(error?.message)
+            }
+        }
+    })
+
+    useEffect(() => {
+        return () => {
+            //console.log('mutated from use effect')
+            //modifyUserPassword.mutate();
+        };
+    }, []);
+
+    const [oldPassword,setOldPassword] = useState<string>('')
+    const [newPassword,setNewPassword] = useState<string>('')
+    const [viewPasswords,setViewPasswords] = useState<boolean>(false)
+
+    return (
+        <form className="flex flex-row w-full h-[70px] relative">
+            <div className="w-[calc(50%-15px)] h-[50px] m-[10px] mr-[5px] relative">
+                <input 
+                type={(viewPasswords)?"text":"password"}
+                placeholder="enter your current password"
+                value={oldPassword}
+                onChange={(e)=>setOldPassword(e.target.value)}
+                className="w-full h-full outline-none focus:outline-none border-white border-2 rounded-[5px] p-[10px]"
+                />
+                {
+                    (viewPasswords)?
+                    <FaEye 
+                    onClick={()=>setViewPasswords(!viewPasswords)} 
+                    className="transition-all duration-100 absolute right-[15px] top-[13px] cursor-pointer text-white size-[25px] "/>
+                    :
+                    <FaEyeSlash 
+                    onClick={()=>setViewPasswords(!viewPasswords)}
+                    className="transition-all duration-100 absolute right-[15px] top-[13px] cursor-pointer text-white size-[25px] "/>               
+                }
+            </div>
+            <input 
+            type={(viewPasswords)?"text":"password"}
+            placeholder="enter your new password"
+            value={newPassword}
+            onChange={(e)=>setNewPassword(e.target.value)}
+            className="w-[calc(50%-15px)] h-[50px] m-[10px] ml-[5px] outline-none focus:outline-none border-white border-2 rounded-[5px] p-[10px]"
+            />
+            <IoSave onClick={()=>modifyUserPassword.mutate()} className="transition-all duration-100 absolute right-[25px] top-[23px] cursor-pointer text-white size-[25px] hover:text-[#AAAAAA] hover:size-[30px] hover:top-[20px] hover:right-[22px]"/>
+        </form>
+    )
+}
+
 function AccountSettings(){
 
     return (
         <div style={{fontFamily:'Audiowide'}} className="w-[60%] backdrop-blur-sm mx-auto p-[50px] bg-[#AAAAAA33] h-full">
             <h1 className="text-[30px] mb-[50px]">Account Settings</h1>
-            <Accordion title="change nickname" component={ChangeNickname}/>
+            <div className="flex flex-col gap-5">
+                <Accordion title="change nickname" component={ChangeNickname}/>
+                <Accordion title="change password" component={ChangePassword}/>
+            </div>
         </div>
     )
 }
