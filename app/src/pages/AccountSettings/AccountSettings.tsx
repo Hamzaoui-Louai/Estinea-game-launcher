@@ -6,6 +6,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoSave } from "react-icons/io5";
 import { toast } from "react-toastify";
+import { IoIosArrowBack } from "react-icons/io";
+import { useAddressStore } from "../../store/AddressStore";
 
 interface accordionInterface{
     title:string,
@@ -139,9 +141,11 @@ function ChangePassword(){
 }
 
 function AccountSettings(){
+    const setAddress = useAddressStore((state)=>state.setAddress)
 
     return (
-        <div style={{fontFamily:'Audiowide'}} className="w-[60%] backdrop-blur-sm mx-auto p-[50px] bg-[#AAAAAA33] h-full">
+        <div onClick={()=>setAddress('main')} style={{fontFamily:'Audiowide'}} className="w-[60%] backdrop-blur-sm mx-auto p-[50px] bg-[#AAAAAA33] h-full relative">
+            <IoIosArrowBack size={35} className="absolute top-[55px] left-[40px] cursor-pointer"/>
             <h1 className="text-[30px] mb-[50px]">Account Settings</h1>
             <div className="flex flex-col gap-5">
                 <Accordion title="change nickname" component={ChangeNickname}/>

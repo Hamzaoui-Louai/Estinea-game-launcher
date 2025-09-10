@@ -149,14 +149,21 @@ async function unzipNewVersion(inputPath:string,outputPath:string){
     });
 }
 
-function deleteOldVersion()
-{
-    
+async function deleteOldVersion(versionPath: string) {
+    try {
+        const files = await fs.readdir(versionPath);
+        for (const file of files) {
+        const filePath = path.join(versionPath, file);
+        await fs.rm(filePath, { recursive: true, force: true });
+        }
+    } catch (err) {
+        console.error("Failed to delete old version:", err);
+    }
 }
 
 async function launchGame(){
     //"C:\Estinea versions folder\Estinea\Estinea 0.0\Stardew Valley\Stardew Valley.exe"
-    const exePath = path.join(await getVersionFolderPath(),`Estinea`,'Estinea 0.0','Stardew Valley','Stardew Valley.exe')
+    const exePath = path.join(await getVersionFolderPath(),`Estinea`,`Estinea`,'Estinea.exe')
 
     const child = spawn(exePath, [], { detached: true , stdio: 'ignore' });
 
@@ -196,8 +203,10 @@ export async function update(onProgress: (progress: {
     const newestVersionAvailable = await getNewestVersionAvailable();
     const versionFilePath = path.join(await getVersionFolderPath(),`Estinea.zip`)
     const versionFolderPath = path.join(await getVersionFolderPath(),`Estinea`)
+    await deleteOldVersion(versionFolderPath);
     await downloadNewVersion(newestVersionAvailable.versionDownloadLink,versionFilePath,onProgress);
-    await unzipNewVersion(versionFilePath,versionFolderPath)
+    await unzipNewVersion(versionFilePath,versionFolderPath);
+    await setLocalVersion(newestVersionAvailable.versionNumber);
 }
 
 export async function launch()

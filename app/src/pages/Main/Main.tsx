@@ -126,8 +126,15 @@ function Main(){
                 <h1 className="text-[20px] font-bold flex justify-self-start">version 1.0</h1>
                 <p className="text-[20px] font-normal flex justify-self-start">didn't even start lol</p>
                 </div>
-                <div className="absolute right-0 top-0 p-[10px] bg-[#102D69] rounded-[50%] m-[15px] cursor-pointer group" onClick={()=>setAddress('accountsettings')}>
-                    <FiSettings className="cursor-pointer transition-all duration-500 rotate-0 group-hover:rotate-[-60deg]" size={30}/>
+                <div 
+                className={`absolute right-0 top-0 p-[10px] bg-[#102D69] rounded-[50%] m-[15px] ${(gameButtonState !== 'updating')?"cursor-pointer":null} group` }
+                onClick={()=>{
+                    if(gameButtonState !== 'updating')
+                    {
+                        setAddress('accountsettings')
+                    }
+                }}>
+                    <FiSettings className={`transition-all duration-500 rotate-0 ${(gameButtonState !== 'updating')?"group-hover:rotate-[-60deg] cursor-pointer text-white":"text-[#AAAAAA]"}`} size={30}/>
                 </div>
                 {/*
                 <div style={{fontFamily:'Audiowide'}} className="w-[25%] bg-[#102D69AA] m-1.5 rounded-[10px] flex flex-col">
